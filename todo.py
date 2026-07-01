@@ -4,27 +4,21 @@ import os
 FILE_NAME = "tasks.json"
 
 
-# ---------------------------
-# Load Tasks
-# ---------------------------
 def load_tasks():
     if os.path.exists(FILE_NAME):
-        with open(FILE_NAME, "r") as file:
-            return json.load(file)
+        try:
+            with open(FILE_NAME, "r") as file:
+                return json.load(file)
+        except json.JSONDecodeError:
+            return []
     return []
 
 
-# ---------------------------
-# Save Tasks
-# ---------------------------
 def save_tasks(tasks):
     with open(FILE_NAME, "w") as file:
         json.dump(tasks, file, indent=4)
 
 
-# ---------------------------
-# View Tasks
-# ---------------------------
 def view_tasks(tasks):
     if not tasks:
         print("\n📭 No tasks available.\n")
@@ -39,11 +33,12 @@ def view_tasks(tasks):
     print()
 
 
-# ---------------------------
-# Add Task
-# ---------------------------
 def add_task(tasks):
-    title = input("\nEnter the task: ")
+    title = input("\nEnter the task: ").strip()
+
+    if title == "":
+        print("❌ Task cannot be empty.\n")
+        return
 
     tasks.append({
         "title": title,
@@ -51,18 +46,15 @@ def add_task(tasks):
     })
 
     save_tasks(tasks)
-
     print("✅ Task added successfully!\n")
 
 
-# ---------------------------
-# Mark Task as Completed
-# ---------------------------
 def complete_task(tasks):
-    view_tasks(tasks)
-
     if not tasks:
+        print("\n📭 No tasks available.\n")
         return
+
+    view_tasks(tasks)
 
     try:
         task_no = int(input("Enter task number to mark as completed: "))
@@ -78,14 +70,12 @@ def complete_task(tasks):
         print("❌ Please enter a valid number.\n")
 
 
-# ---------------------------
-# Delete Task
-# ---------------------------
 def delete_task(tasks):
-    view_tasks(tasks)
-
     if not tasks:
+        print("\n📭 No tasks available.\n")
         return
+
+    view_tasks(tasks)
 
     try:
         task_no = int(input("Enter task number to delete: "))
@@ -101,14 +91,10 @@ def delete_task(tasks):
         print("❌ Please enter a valid number.\n")
 
 
-# ---------------------------
-# Main Program
-# ---------------------------
 def main():
     tasks = load_tasks()
 
     while True:
-
         print("=" * 40)
         print("       TO-DO LIST MANAGER")
         print("=" * 40)
